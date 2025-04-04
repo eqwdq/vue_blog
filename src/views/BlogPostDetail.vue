@@ -2,8 +2,13 @@
   <div class="post-detail">
     <button @click="goBack" class="back-button">← Back</button>
     <article v-if="post">
-      <div class="post-thumbnail" :style="{ backgroundColor: post.thumbnail || '#cccccc' }"></div>
-      <div class="post-header">
+      <div class="post-thumbnail">
+              <img
+                :src="post.thumbnail"
+                :alt="post.title"
+                @error="handleImageError">
+            </div>
+            <div class="post-header">
         <h1>{{ post.title }}</h1>
         <div class="likes-container">
           <button class="like-button" @click="toggleLike">
