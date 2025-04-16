@@ -24,7 +24,6 @@ export default {
   },
   methods: {
     handleSearch() {
-      // Emit search event immediately without debouncing
       this.$emit('search', this.searchQuery.trim());
     },
     focusInput() {

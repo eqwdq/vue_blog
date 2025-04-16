@@ -25,11 +25,9 @@
       </div>
       <p class="content">{{ post.content }}</p>
 
-      <!-- Comments Section -->
       <section class="comments-section">
         <h2>Comments ({{ commentsCount }})</h2>
 
-        <!-- Comment Form -->
         <div class="comment-form">
           <h3>Leave a Comment</h3>
           <form @submit.prevent="submitComment">
@@ -57,7 +55,6 @@
           </form>
         </div>
 
-        <!-- Comments List -->
         <div class="comments-list" v-if="commentsCount > 0">
           <div v-for="comment in post.comments" :key="comment.id" class="comment">
             <div class="comment-header">
@@ -89,13 +86,11 @@ export default {
     const postId = parseInt(route.params.id);
     const post = blogPosts.find(p => p.id === postId);
 
-    // Create a reactive newComment object
     const newComment = reactive({
       author: '',
       text: ''
     });
 
-    // Get liked posts from localStorage
     const getLikedPosts = () => {
       try {
         const storedLikes = localStorage.getItem('likedPosts');
@@ -118,31 +113,25 @@ export default {
 
     const toggleLike = () => {
       if (isLiked.value) {
-        // Unlike
         likedPosts.value = likedPosts.value.filter(id => id !== postId);
       } else {
-        // Like
         likedPosts.value.push(postId);
       }
 
-      // Update localStorage
       localStorage.setItem('likedPosts', JSON.stringify(likedPosts.value));
     };
 
     const goBack = () => router.back();
 
-    // Count comments
     const commentsCount = computed(() => {
       return post ? post.comments.length : 0;
     });
 
-    // Submit comment
     const submitComment = () => {
       if (!post) return;
 
-      // Create new comment
       const comment = {
-        id: Date.now(), // Generate unique ID based on timestamp
+        id: Date.now(),
         author: newComment.author,
         date: new Date().toLocaleDateString('en-US', {
           year: 'numeric',
@@ -152,10 +141,8 @@ export default {
         text: newComment.text
       };
 
-      // Add comment to post
       post.comments.push(comment);
 
-      // Reset form
       newComment.author = '';
       newComment.text = '';
     };
@@ -265,7 +252,6 @@ export default {
   color: #666;
 }
 
-/* Comments Section Styles */
 .comments-section {
   margin-top: 40px;
   border-top: 1px solid #eee;

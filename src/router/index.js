@@ -1,46 +1,40 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import BlogPosts from '../views/BlogPosts.vue'
-import BlogPostDetail from '../views/BlogPostDetail.vue'
-import AboutView from '../views/AboutView.vue'
-import ContactView from '../views/ContactView.vue'
-import PricingView from '../views/PricingView.vue'
-import ProfileView from '../views/ProfileView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'BlogPosts',
-    component: BlogPosts,
+    component: () => import('../views/BlogPosts.vue'),
     props: true
   },
   {
     path: '/post/:id',
     name: 'BlogPostDetail',
-    component: BlogPostDetail,
+    component: () => import('../views/BlogPostDetail.vue'),
     props: true
   },
   {
     path: '/about',
     name: 'About',
-    component: AboutView
+    component: () => import('../views/AboutView.vue')
   },
   {
     path: '/contact',
     name: 'Contact',
-    component: ContactView
+    component: () => import('../views/ContactView.vue')
   },
   {
     path: '/pricing',
     name: 'Pricing',
-    component: PricingView
+    component: () => import('../views/PricingView.vue')
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: ProfileView
+    component: () => import('../views/ProfileView.vue')
   }
 ]
+
 
 const router = createRouter({
   history: createWebHistory(),

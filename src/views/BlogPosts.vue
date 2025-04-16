@@ -1,65 +1,69 @@
 <template>
   <div>
     <div v-if="searchQuery" class="search-results">
-      <h2>Search Results for: {{ searchQuery }}</h2>
-      <p v-if="filteredPosts.length === 0">No posts found matching your search.</p>
-    </div>
+       <h2>Search Results for: {{ searchQuery }}</h2>
+       <p v-if="filteredPosts.length === 0">No posts found matching your search.</p>
+     </div>
 
-    <div class="categories-filter">
-      <button
-        v-for="category in availableCategories"
-        :key="category"
-        :class="{ active: activeCategory === category }"
-        @click="filterByCategory(category)"
-        class="category-btn">
-        {{ category }}
-      </button>
-      <button
-        :class="{ active: activeCategory === null }"
-        @click="filterByCategory(null)"
-        class="category-btn">
-        All
-      </button>
-    </div>
+     <div class="categories-filter">
+       <button
+         v-for="category in availableCategories"
+         :key="category"
+         :class="{ active: activeCategory === category }"
+         @click="filterByCategory(category)"
+         class="category-btn">
+         {{ category }}
+       </button>
+       <button
+         :class="{ active: activeCategory === null }"
+         @click="filterByCategory(null)"
+         class="category-btn">
+         All
+       </button>
+     </div>
 
     <div v-for="(posts, category) in groupedPosts" :key="category" class="category-section">
-      <div class="category-header">
-        <h2 class="category-title">{{ category }}</h2>
-        <div class="scroll-controls">
-          <button class="scroll-btn prev" @click="scrollCategory('left', category)">
-            &lt;
-          </button>
-          <button class="scroll-btn next" @click="scrollCategory('right', category)">
-            &gt;
-          </button>
-        </div>
-      </div>
+       <div class="category-header">
+         <h2 class="category-title">{{ category }}</h2>
+         <div class="scroll-controls">
+           <button class="scroll-btn prev" @click="scrollCategory('left', category)">
+             &lt;
+           </button>
+           <button class="scroll-btn next" @click="scrollCategory('right', category)">
+             &gt;
+           </button>
+         </div>
+       </div>
+
       <div class="posts-container">
         <div :ref="'posts-row-' + category" class="posts-row">
           <article v-for="post in posts" :key="post.id" class="post">
             <div class="post-thumbnail">
-              <img
-                :src="post.thumbnail"
-                :alt="post.title"
-                loading="lazy"
-                @error="handleImageError">
-            </div>
-            <div class="post-content">
-              <h3>{{ post.title }}</h3>
-              <p class="post-meta">Posted on {{ post.date }}</p>
-              <p class="post-excerpt">{{ trimmedContent(post.content) }}</p>
-              <div class="post-actions">
-                <router-link :to="'/post/' + post.id" class="read-more">Read More →</router-link>
-                <div class="likes-container">
-                  <button class="like-button" @click="likePost(post)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="heart-icon" :class="{ 'liked': likedPosts.includes(post.id) }">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                  </button>
-                  <span class="likes-count">{{ post.likes + (likedPosts.includes(post.id) ? 1 : 0) }}</span>
+                 <img
+                   :src="post.thumbnail"
+                     width="300"
+                     height="150"
+                   :alt="post.title"
+                   loading="lazy"
+                   @error="handleImageError"
+                 >
+                 </div>
+              <div class="post-content">
+                <h3>{{ post.title }}</h3>
+                <p class="post-meta">Posted on {{ post.date }}</p>
+                <p class="post-excerpt">{{ trimmedContent(post.content) }}</p>
+                <div class="post-actions">
+                  <router-link :to="'/post/' + post.id" class="read-more">Read More →</router-link>
+                  <div class="likes-container">
+                    <button class="like-button" @click="likePost(post)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="heart-icon" :class="{ 'liked': likedPosts.includes(post.id) }">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                      </svg>
+                    </button>
+                    <span class="likes-count">{{ post.likes + (likedPosts.includes(post.id) ? 1 : 0) }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
           </article>
         </div>
       </div>
@@ -68,7 +72,11 @@
 </template>
 
 <script>
-import { blogPosts } from '../data/blogPosts.js'
+import { blogPosts } from '../data/blogPosts.js';
+
+const PLACEHOLDER_W = '300';
+const PLACEHOLDER_H = '150';
+
 export default {
   name: 'BlogPosts',
   props: {
@@ -78,94 +86,107 @@ export default {
     }
   },
   data() {
-    return {
-      scrollAmount: 350,
-      activeCategory: null,
-      likedPosts: []
-    }
+     return {
+       scrollAmount: 350,
+       activeCategory: null,
+       likedPosts: []
+     }
   },
   computed: {
-    availableCategories() {
-      const categories = new Set();
-      blogPosts.forEach(post => {
-        if (post.category) {
-          categories.add(post.category);
-        }
-      });
-      return Array.from(categories);
-    },
-    filteredPosts() {
-      let posts = blogPosts;
-      if (this.activeCategory) {
-        posts = posts.filter(post => post.category === this.activeCategory);
-      }
-      if (this.searchQuery) {
-        const query = this.searchQuery.toLowerCase();
-        return posts.filter(post =>
-          post.title.toLowerCase().includes(query) ||
-          post.summary?.toLowerCase().includes(query) ||
-          post.category?.toLowerCase().includes(query) ||
-          post.content.toLowerCase().includes(query)
-        );
-      }
-      return posts;
-    },
-    groupedPosts() {
-      const grouped = {};
-      this.filteredPosts.forEach(post => {
-        const category = post.category || 'Uncategorized';
-        if (!grouped[category]) {
-          grouped[category] = [];
-        }
-        grouped[category].push(post);
-      });
-      return grouped;
-    },
-    displayPosts() {
-      return this.filteredPosts;
-    }
+      availableCategories() {
+       const categories = new Set();
+       blogPosts.forEach(post => {
+         if (post && post.category) {
+           categories.add(post.category);
+         }
+       });
+       return Array.from(categories);
+     },
+     filteredPosts() {
+       let posts = blogPosts.filter(post => post != null);
+       if (this.activeCategory) {
+         posts = posts.filter(post => post.category === this.activeCategory);
+       }
+       if (this.searchQuery) {
+         const query = this.searchQuery.toLowerCase();
+         posts = posts.filter(post =>
+           (post.title && post.title.toLowerCase().includes(query)) ||
+           (post.summary && post.summary.toLowerCase().includes(query)) ||
+           (post.category && post.category.toLowerCase().includes(query)) ||
+           (post.content && post.content.toLowerCase().includes(query))
+         );
+       }
+       return posts;
+     },
+     groupedPosts() {
+       const grouped = {};
+       this.filteredPosts.forEach(post => {
+         if (post) {
+             const category = post.category || 'Uncategorized';
+             if (!grouped[category]) {
+               grouped[category] = [];
+             }
+             grouped[category].push(post);
+          }
+       });
+       return grouped;
+     },
   },
   methods: {
-    filterByCategory(category) {
-      this.activeCategory = category;
+      filterByCategory(category) {
+       this.activeCategory = category;
+     },
+     scrollCategory(direction, category) {
+        const scrollContainer = this.$refs[`posts-row-${category}`]?.[0];
+        if (scrollContainer) {
+            const postElement = scrollContainer.querySelector('.post');
+            const postWidth = postElement ? postElement.offsetWidth : parseInt(PLACEHOLDER_W, 10);
+            const postMargin = postElement ? parseFloat(window.getComputedStyle(postElement).marginRight) : 20;
+            const scrollStep = postWidth + postMargin;
+            const scrollAmount = direction === 'left' ? -scrollStep : scrollStep;
+            const currentScroll = scrollContainer.scrollLeft;
+            const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+            let newScrollPosition = Math.max(0, Math.min(currentScroll + scrollAmount, maxScroll));
+            scrollContainer.scrollTo({ left: newScrollPosition, behavior: 'smooth' });
+        }
     },
-    scrollCategory(direction, category) {
-      const scrollContainer = this.$refs[`posts-row-${category}`][0];
-      if (scrollContainer) {
-        const scrollAmount = direction === 'left' ? -this.scrollAmount : this.scrollAmount;
-        const currentScroll = scrollContainer.scrollLeft;
-        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-        let newScrollPosition = Math.max(0, Math.min(currentScroll + scrollAmount, maxScroll));
-        scrollContainer.scrollTo({
-          left: newScrollPosition,
-          behavior: 'smooth'
-        });
-      }
-    },
-    likePost(post) {
-      if (this.likedPosts.includes(post.id)) {
-        this.likedPosts = this.likedPosts.filter(id => id !== post.id);
-      } else {
-        this.likedPosts.push(post.id);
-      }
-      localStorage.setItem('likedPosts', JSON.stringify(this.likedPosts));
-    },
-    trimmedContent(content) {
-      return content.length > 120 ? content.substring(0, 120) + '...' : content;
-    },
+     likePost(post) {
+       if (!post || !post.id) return;
+       if (this.likedPosts.includes(post.id)) {
+         this.likedPosts = this.likedPosts.filter(id => id !== post.id);
+       } else {
+         this.likedPosts.push(post.id);
+       }
+       localStorage.setItem('likedPosts', JSON.stringify(this.likedPosts));
+     },
+     trimmedContent(content) {
+        if (!content) return '';
+        const maxLength = 120;
+        return content.length > maxLength ? content.substring(0, maxLength) + '...' : content;
+     },
     handleImageError(event) {
-      event.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Found';
-    }
+      console.warn(`Image failed to load: ${event.target.src}. Replacing with placeholder.`);
+      event.target.src = `https://via.placeholder.com/${PLACEHOLDER_W}x${PLACEHOLDER_H}?text=Image+Error`;
+      event.target.onerror = null;
+    },
+
   },
   mounted() {
-    const storedLikes = localStorage.getItem('likedPosts');
-    if (storedLikes) {
-      try {
-        this.likedPosts = JSON.parse(storedLikes);
-      } catch (e) {
-        console.error('Could not parse liked posts', e);
-      }
-    }
+     const storedLikes = localStorage.getItem('likedPosts');
+     if (storedLikes) {
+       try {
+         const parsedLikes = JSON.parse(storedLikes);
+         if (Array.isArray(parsedLikes)) {
+             this.likedPosts = parsedLikes;
+         } else {
+             this.likedPosts = [];
+         }
+       } catch (e) {
+         console.error('Could not parse liked posts', e);
+         this.likedPosts = [];
+       }
+     }
+
   }
 }
 </script>
@@ -222,13 +243,15 @@ export default {
 }
 .posts-row {
   display: flex;
-  overflow: hidden;
+  overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
-  background-color: white;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px 0;
+   scrollbar-width: none;
+   -ms-overflow-style: none;
+}
+.posts-row::-webkit-scrollbar {
+    display: none;
 }
 .post {
   flex: 0 0 300px;
@@ -239,20 +262,28 @@ export default {
   transition: transform 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
   background-color: white;
+  white-space: normal;
 }
+.post:first-child {
+    margin-left: 20px;
+}
+.post:last-child {
+    margin-right: 20px;
+}
+
 .post-thumbnail {
   margin-bottom: 15px;
   width: 100%;
   height: 150px;
   background-color: #cccccc;
+  display: block;
 }
 .post-thumbnail img {
-  width: 100%;
-  height: 100%;
+  display: block;
   object-fit: cover;
 }
 .post-content {
-  padding: 15px;
+  padding: 0 15px 15px 15px;
 }
 .post:hover {
   transform: translateY(-5px);
@@ -260,13 +291,16 @@ export default {
 }
 .post h3 {
   margin-top: 0;
+  margin-bottom: 10px;
   color: #333;
   font-family: var(--font-garamond);
   font-weight: 500;
+  font-size: 1.1em;
+  line-height: 1.3;
 }
 .post-meta {
   color: #777;
-  font-size: 0.9em;
+  font-size: 0.85em;
   margin-bottom: 10px;
   font-family: var(--font-cormorant);
 }
@@ -294,7 +328,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 .category-btn {
   padding: 8px 16px;
@@ -339,7 +373,7 @@ export default {
 }
 .heart-icon {
   color: #999;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 .heart-icon.liked {
   fill: #ff4757;
@@ -351,18 +385,27 @@ export default {
 }
 .post-excerpt {
   margin-bottom: 10px;
-  color: #333;
+  color: #555;
   line-height: 1.5;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   font-family: var(--font-cormorant);
+  font-size: 0.95em;
+  min-height: calc(1.5em * 3);
 }
+
 @media (max-width: 768px) {
   .post {
     flex: 0 0 270px;
     margin-right: 15px;
+  }
+  .post:first-child {
+    margin-left: 15px;
+  }
+  .post:last-child {
+      margin-right: 15px;
   }
   .post-thumbnail {
     height: 120px;
@@ -372,5 +415,19 @@ export default {
     height: 22px;
     font-size: 12px;
   }
+   .category-title {
+        font-size: 1.1em;
+    }
+     .post h3 {
+        font-size: 1em;
+    }
+    .post-excerpt {
+        font-size: 0.9em;
+        -webkit-line-clamp: 2;
+        min-height: calc(1.5em * 2);
+    }
+     .post-meta {
+        font-size: 0.8em;
+    }
 }
 </style>

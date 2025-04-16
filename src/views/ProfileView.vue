@@ -104,8 +104,6 @@ export default {
         .toUpperCase();
     },
     postsCount() {
-      // For demo purposes, just returning a count of available posts
-      // In a real app, this would be filtered by the user's posts
       return 12;
     },
     likedPosts() {
@@ -121,26 +119,23 @@ export default {
       return this.likedPosts.length;
     },
     commentsCount() {
-      // In a real app, this would be actual user comments count
       return 36;
     },
     recentActivity() {
       const activity = [];
 
-      // Add liked posts to activity
       this.likedPosts.forEach(postId => {
         const post = blogPosts.find(p => p.id === postId);
         if (post) {
           activity.push({
             type: 'like',
             text: `You liked "${post.title}"`,
-            date: 'Recently', // In a real app, we would store the actual timestamp
-            timestamp: Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000 // Random time within last week for sorting
+            date: 'Recently',
+            timestamp: Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000
           });
         }
       });
 
-      // Add some default activities if needed
       if (activity.length < 4) {
         activity.push(
           {
@@ -158,13 +153,11 @@ export default {
         );
       }
 
-      // Sort by most recent first
       return activity.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
     }
   },
   methods: {
     saveProfile() {
-      // In a real app, this would save to backend
       alert('Profile saved successfully!');
     }
   }

@@ -53,7 +53,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 30px; /* Reduced right padding from 80px to 30px */
+  padding: 15px 30px;
   max-width: 100%;
   margin: 0 auto;
 }
@@ -136,8 +136,8 @@ export default {
 .profile-link {
   display: flex;
   align-items: center;
-  margin-right: 5px; /* Add small right margin to profile link */
-  margin-left: 35px; /* Add margin to the left side of the profile link */
+  margin-right: 5px;
+  margin-left: 35px;
 }
 
 @media (max-width: 768px) {

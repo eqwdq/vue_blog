@@ -21,7 +21,6 @@ export default {
   methods: {
     performSearch(query) {
       this.searchQuery = query;
-      // Navigate to home when searching
       if (this.$route.path !== '/') {
         this.$router.push('/');
       }
